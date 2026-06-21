@@ -125,10 +125,12 @@ export const generateHTML = (data) => {
     jobCards,
     pagination = '',
     useInfiniteScroll = true,
+    pageVariant = useInfiniteScroll ? 'view' : 'page',
     queryParams
   } = data;
   const { empMax, companyQuery, titleQuery, locationQuery, lastday, industries, industryMode } = queryParams;
-  const jobsPath = useInfiniteScroll ? '/view' : '/page';
+  const isIndexMode = pageVariant === 'index';
+  const jobsPath = isIndexMode ? '/index' : (useInfiniteScroll ? '/view' : '/page');
   const hasActiveFilters = Boolean(
     empMax || companyQuery || titleQuery || locationQuery || lastday || (industries && industries.length > 0)
   );
@@ -160,7 +162,7 @@ export const generateHTML = (data) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>LinkedIn Jobs Database - Page ${page}</title>
+      <title>${isIndexMode ? 'LinkedIn Job Board - Remote US Roles' : 'LinkedIn Jobs Database'} - Page ${page}</title>
       <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
       <style>
         :root {
@@ -2649,6 +2651,1234 @@ export const generateHTML = (data) => {
           cursor: not-allowed;
         }
 
+        .page-theme-toggle .page-nav-glyph {
+          font-size: 1.2rem;
+        }
+
+        [data-theme="dark"] body.paged-mode {
+          --bg-primary: #17191c;
+          --bg-secondary: #202326;
+          --bg-tertiary: #2a2d31;
+          --text-primary: #f1f3f5;
+          --text-secondary: #d3d7db;
+          --text-tertiary: #aeb5bc;
+          --text-muted: #8d969e;
+          --border-primary: #3b4045;
+          --border-secondary: #4a5056;
+          --border-accent: #69727a;
+          --selection-bg: #29343e;
+          --shadow-primary: rgba(0, 0, 0, 0.38);
+          --shadow-accent: rgba(112, 181, 249, 0.24);
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          color-scheme: dark;
+        }
+
+        [data-theme="dark"] .paged-mode .navbar,
+        [data-theme="dark"] .paged-mode .filters,
+        [data-theme="dark"] .paged-mode .job-board-layout,
+        [data-theme="dark"] .paged-mode .job-list-pane,
+        [data-theme="dark"] .paged-mode .job-detail-panel,
+        [data-theme="dark"] .paged-mode .job-detail-header,
+        [data-theme="dark"] .paged-mode .job-detail-content,
+        [data-theme="dark"] .paged-mode .job-recruiter,
+        [data-theme="dark"] .paged-mode .job-card,
+        [data-theme="dark"] .paged-mode .job-list-feedback,
+        [data-theme="dark"] .paged-mode .job-list-promo,
+        [data-theme="dark"] .paged-mode .job-list-pagination,
+        [data-theme="dark"] .paged-mode .job-list-footer {
+          border-color: var(--border-primary);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .navbar,
+        [data-theme="dark"] .paged-mode .page-filter-shell,
+        [data-theme="dark"] .paged-mode .job-board-layout {
+          box-shadow: 0 1px 3px var(--shadow-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-search-field,
+        [data-theme="dark"] .paged-mode .page-search-submit {
+          border-color: var(--border-accent);
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-search-field input,
+        [data-theme="dark"] .paged-mode .page-search-field input::placeholder,
+        [data-theme="dark"] .paged-mode .search-field-icon {
+          color: var(--text-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-search-field:focus-within {
+          border-color: #70b5f9;
+          box-shadow: inset 0 0 0 1px #70b5f9;
+        }
+
+        [data-theme="dark"] .paged-mode .page-search-submit {
+          border-color: #70b5f9;
+          color: #70b5f9;
+        }
+
+        [data-theme="dark"] .paged-mode .page-search-submit:hover,
+        [data-theme="dark"] .paged-mode .page-search-submit:focus-visible,
+        [data-theme="dark"] .paged-mode .page-nav-item:hover,
+        [data-theme="dark"] .paged-mode .page-nav-item:focus-visible {
+          background: #30363c;
+        }
+
+        [data-theme="dark"] .paged-mode .page-nav-item,
+        [data-theme="dark"] .paged-mode .job-count,
+        [data-theme="dark"] .paged-mode .auto-refresh-control {
+          color: var(--text-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-nav-item:hover,
+        [data-theme="dark"] .paged-mode .page-nav-item:focus-visible,
+        [data-theme="dark"] .paged-mode .page-nav-item.active,
+        [data-theme="dark"] .paged-mode .page-theme-toggle {
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-nav-divider {
+          background: var(--border-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-nav-live-indicator,
+        [data-theme="dark"] .paged-mode .page-nav-alert-dot {
+          border-color: var(--bg-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-pill {
+          border-color: var(--border-accent);
+          background: var(--bg-secondary);
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-pill:hover,
+        [data-theme="dark"] .paged-mode .filter-pill:focus-visible {
+          border-color: var(--text-secondary);
+          background: var(--bg-tertiary);
+          box-shadow: inset 0 0 0 1px var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-pill-primary {
+          border-color: #2f9b6d;
+          background: #1d7452;
+          color: #ffffff;
+        }
+
+        [data-theme="dark"] .paged-mode .filter-pill.applied {
+          border-color: #7fc9a8;
+          background: #173e30;
+          color: #b7ead3;
+        }
+
+        [data-theme="dark"] .paged-mode .all-filters-pill::before {
+          background: var(--border-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-drawer,
+        [data-theme="dark"] .paged-mode .filter-drawer-footer {
+          border-color: var(--border-primary);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-drawer-header,
+        [data-theme="dark"] .paged-mode .drawer-filter-section {
+          border-color: var(--border-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-drawer-close,
+        [data-theme="dark"] .paged-mode .filter-reset-link,
+        [data-theme="dark"] .paged-mode .drawer-field-label,
+        [data-theme="dark"] .paged-mode .drawer-choice,
+        [data-theme="dark"] .paged-mode .filter-drawer .industry-checkbox,
+        [data-theme="dark"] .paged-mode .filter-drawer .industry-checkbox label,
+        [data-theme="dark"] .paged-mode .industry-mode-switch span {
+          color: var(--text-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .filter-drawer-close:hover {
+          background: var(--bg-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .drawer-filter-section > input[type="text"],
+        [data-theme="dark"] .paged-mode .drawer-filter-section > input[type="number"],
+        [data-theme="dark"] .paged-mode .filter-drawer .industry-checkboxes {
+          border-color: var(--border-accent);
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .industry-mode-switch {
+          border-color: var(--border-accent);
+        }
+
+        [data-theme="dark"] .paged-mode .job-card:hover {
+          background: #282d32;
+        }
+
+        [data-theme="dark"] .paged-mode .job-card.selected {
+          border-left-color: #70b5f9;
+          background: var(--selection-bg);
+        }
+
+        [data-theme="dark"] .paged-mode .job-card .job-title a,
+        [data-theme="dark"] .paged-mode .job-card.selected .job-title a {
+          color: #70b5f9;
+        }
+
+        [data-theme="dark"] .paged-mode .company-name,
+        [data-theme="dark"] .paged-mode .company-name a,
+        [data-theme="dark"] .paged-mode .job-list-feedback strong,
+        [data-theme="dark"] .paged-mode .job-list-promo strong,
+        [data-theme="dark"] .paged-mode .job-detail-title,
+        [data-theme="dark"] .paged-mode .detail-company-name,
+        [data-theme="dark"] .paged-mode .job-detail-content h2,
+        [data-theme="dark"] .paged-mode .job-description strong,
+        [data-theme="dark"] .paged-mode .job-description h3,
+        [data-theme="dark"] .paged-mode .job-description h4 {
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .job-location,
+        [data-theme="dark"] .paged-mode .job-list-feedback p,
+        [data-theme="dark"] .paged-mode .job-detail-location,
+        [data-theme="dark"] .paged-mode .job-detail-meta,
+        [data-theme="dark"] .paged-mode .job-description,
+        [data-theme="dark"] .paged-mode .job-list-footer {
+          color: var(--text-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .detail-job-tag {
+          border-color: var(--border-accent);
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .detail-icon-button,
+        [data-theme="dark"] .paged-mode .job-feedback-button,
+        [data-theme="dark"] .paged-mode .job-list-promo-close {
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .detail-icon-button:hover,
+        [data-theme="dark"] .paged-mode .detail-icon-button:focus-visible,
+        [data-theme="dark"] .paged-mode .job-feedback-button:hover,
+        [data-theme="dark"] .paged-mode .job-feedback-button:focus-visible,
+        [data-theme="dark"] .paged-mode .job-feedback-button.selected {
+          background: var(--bg-tertiary);
+          color: #70b5f9;
+        }
+
+        [data-theme="dark"] .paged-mode .detail-more-menu {
+          border-color: var(--border-primary);
+          background: var(--bg-secondary);
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+        }
+
+        [data-theme="dark"] .paged-mode .detail-more-menu a,
+        [data-theme="dark"] .paged-mode .detail-more-menu button {
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .detail-more-menu a:hover,
+        [data-theme="dark"] .paged-mode .detail-more-menu a:focus-visible,
+        [data-theme="dark"] .paged-mode .detail-more-menu button:hover,
+        [data-theme="dark"] .paged-mode .detail-more-menu button:focus-visible,
+        [data-theme="dark"] .paged-mode .job-recruiter-message:hover,
+        [data-theme="dark"] .paged-mode .job-recruiter-message:focus-visible,
+        [data-theme="dark"] .paged-mode .job-list-promo-action:hover,
+        [data-theme="dark"] .paged-mode .job-list-promo-action:focus-visible,
+        [data-theme="dark"] .paged-mode .page-btn:hover {
+          background: var(--bg-tertiary);
+          color: #a8d5ff;
+        }
+
+        [data-theme="dark"] .paged-mode .job-recruiter-image-placeholder {
+          background: var(--bg-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .job-recruiter-title,
+        [data-theme="dark"] .paged-mode .job-recruiter-label,
+        [data-theme="dark"] .paged-mode .job-criterion dt {
+          color: var(--text-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .job-criterion dd {
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .page-btn {
+          color: #70b5f9;
+        }
+
+        [data-theme="dark"] .paged-mode .page-btn.active {
+          background: #e8eaed;
+          color: #202326;
+        }
+
+        [data-theme="dark"] .paged-mode .job-detail-panel {
+          scrollbar-color: var(--border-accent) var(--bg-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-shell,
+        [data-theme="dark"] .paged-mode .chat-conversation-shell {
+          color: var(--text-primary);
+          filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+        }
+
+        [data-theme="dark"] .paged-mode .chat-header,
+        [data-theme="dark"] .paged-mode .chat-panel,
+        [data-theme="dark"] .paged-mode .chat-conversation-panel,
+        [data-theme="dark"] .paged-mode .chat-conversation-header,
+        [data-theme="dark"] .paged-mode .chat-user-search,
+        [data-theme="dark"] .paged-mode .chat-user-button,
+        [data-theme="dark"] .paged-mode .chat-composer {
+          border-color: var(--border-primary);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-header-action,
+        [data-theme="dark"] .paged-mode .chat-conversation-action,
+        [data-theme="dark"] .paged-mode .chat-user-name,
+        [data-theme="dark"] .paged-mode .chat-user-button {
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-presence,
+        [data-theme="dark"] .paged-mode .chat-connection,
+        [data-theme="dark"] .paged-mode .chat-user-status,
+        [data-theme="dark"] .paged-mode .chat-empty,
+        [data-theme="dark"] .paged-mode .chat-message-meta {
+          color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-header-action:hover,
+        [data-theme="dark"] .paged-mode .chat-header-action:focus-visible,
+        [data-theme="dark"] .paged-mode .chat-header-main:hover,
+        [data-theme="dark"] .paged-mode .chat-header-main:focus-visible,
+        [data-theme="dark"] .paged-mode .chat-conversation-action:hover,
+        [data-theme="dark"] .paged-mode .chat-conversation-action:focus-visible,
+        [data-theme="dark"] .paged-mode .chat-user-button:hover,
+        [data-theme="dark"] .paged-mode .chat-user-button:focus-visible {
+          background: var(--bg-tertiary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-settings,
+        [data-theme="dark"] .paged-mode .chat-user-search input,
+        [data-theme="dark"] .paged-mode .chat-settings input,
+        [data-theme="dark"] .paged-mode .chat-composer textarea {
+          border-color: var(--border-accent);
+          background: var(--bg-tertiary);
+          color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-connection,
+        [data-theme="dark"] .paged-mode .chat-settings {
+          border-color: var(--border-primary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-user-list,
+        [data-theme="dark"] .paged-mode .chat-messages {
+          scrollbar-color: var(--border-accent) var(--bg-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-online-dot,
+        [data-theme="dark"] .paged-mode .chat-user-avatar.online::after {
+          border-color: var(--bg-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-user-avatar {
+          background: #314456;
+          color: #a8d5ff;
+        }
+
+        [data-theme="dark"] .paged-mode .chat-message-bubble {
+          background: var(--bg-tertiary);
+          color: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .paged-mode .chat-message.own .chat-message-bubble {
+          background: #264662;
+          color: #edf6ff;
+        }
+
+        .index-mode {
+          --bg-primary: #f4f6f8;
+          --bg-secondary: #ffffff;
+          --bg-tertiary: #f8fafb;
+          --text-primary: #17212b;
+          --text-secondary: #52606d;
+          --text-tertiary: #667785;
+          --text-muted: #7b8794;
+          --border-primary: #dce2e7;
+          --border-secondary: #c8d0d8;
+          --border-accent: #aeb9c3;
+          --accent-primary: #0a66c2;
+          --accent-secondary: #0a66c2;
+          --accent-gradient: linear-gradient(135deg, #0a66c2, #004182);
+          --shadow-primary: rgba(23, 33, 43, 0.08);
+          --shadow-accent: rgba(8, 127, 91, 0.16);
+          --selection-bg: #eaf5f0;
+          background: #f4f6f8;
+          color: #17212b;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+          letter-spacing: 0;
+          overflow-x: hidden;
+        }
+
+        .index-mode .index-navbar {
+          min-height: 64px;
+          padding: 0;
+          border-bottom: 1px solid #dce2e7;
+          background: rgba(255, 255, 255, 0.97);
+          box-shadow: 0 2px 8px rgba(23, 33, 43, 0.06);
+          backdrop-filter: blur(12px);
+        }
+
+        .index-mode .index-navbar .nav-content {
+          width: 100%;
+          min-width: 0;
+          min-height: 64px;
+          max-width: 1520px;
+          gap: 1.25rem;
+          padding: 0 1.5rem;
+        }
+
+        .index-brand {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.65rem;
+          color: #17212b;
+          text-decoration: none;
+          font-size: 1rem;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+
+        .index-brand-mark {
+          width: 34px;
+          height: 34px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          background: #17212b;
+          color: #ffffff;
+          font-size: 0.88rem;
+          font-weight: 800;
+        }
+
+        .index-nav-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.85rem;
+          margin-left: auto;
+        }
+
+        .index-mode .index-nav-actions .job-count {
+          color: #52606d;
+          font-family: inherit;
+          font-size: 0.78rem;
+          font-weight: 600;
+        }
+
+        .index-mode .container {
+          width: 100%;
+          max-width: 1520px;
+          display: grid;
+          grid-template-columns: 280px minmax(0, 1fr);
+          grid-template-rows: auto auto;
+          align-items: start;
+          gap: 1rem 1.25rem;
+          padding: 1.5rem;
+        }
+
+        .index-mode .filters {
+          position: sticky;
+          top: 80px;
+          grid-column: 1;
+          grid-row: 1 / span 2;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          border: 1px solid #dce2e7;
+          border-radius: 6px;
+          background: #ffffff;
+          box-shadow: 0 3px 12px rgba(23, 33, 43, 0.05);
+        }
+
+        .index-filter-header {
+          min-height: 54px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+          padding: 0 1rem;
+          border-bottom: 1px solid #e5e9ed;
+        }
+
+        .index-filter-header strong {
+          font-size: 0.9rem;
+          font-weight: 700;
+        }
+
+        .index-filter-reset {
+          color: #0a66c2;
+          text-decoration: none;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+
+        .index-mode .filter-grid {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+        }
+
+        .index-mode .filter-group,
+        .index-mode .industry-filter,
+        .index-mode .filter-actions {
+          width: 100%;
+          padding: 0.85rem 1rem;
+          border-top: 1px solid #eef1f3;
+        }
+
+        .index-mode .filter-group:first-of-type {
+          border-top: 0;
+        }
+
+        .index-mode .filter-group label,
+        .index-mode .industry-mode label {
+          margin-bottom: 0.4rem;
+          color: #52606d;
+          font-family: inherit;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0;
+          text-transform: none;
+        }
+
+        .index-mode .filter-group input,
+        .index-mode .filter-group select {
+          height: 38px;
+          padding: 0 0.65rem;
+          border: 1px solid #c8d0d8;
+          border-radius: 4px;
+          background: #ffffff;
+          color: #17212b;
+          font-size: 0.82rem;
+        }
+
+        .index-mode .filter-group input:focus,
+        .index-mode .filter-group select:focus {
+          border-color: #0a66c2;
+          box-shadow: 0 0 0 2px rgba(8, 127, 91, 0.12);
+        }
+
+        .index-mode .industry-filter {
+          grid-column: auto;
+          margin: 0;
+        }
+
+        .index-mode .industry-filter h3 {
+          margin: 0 0 0.65rem !important;
+          color: #17212b !important;
+          font-size: 0.8rem !important;
+        }
+
+        .index-mode .industry-controls {
+          display: grid;
+          gap: 0.45rem;
+          margin-bottom: 0.65rem;
+        }
+
+        .index-mode .industry-checkboxes {
+          grid-template-columns: 1fr;
+          max-height: 190px;
+          gap: 0.35rem;
+          padding: 0.65rem;
+          border: 1px solid #dce2e7;
+          border-radius: 4px;
+          background: #f8fafb;
+          scrollbar-color: #aeb9c3 #f8fafb;
+        }
+
+        .index-mode .industry-checkbox {
+          color: #52606d;
+          font-size: 0.76rem;
+        }
+
+        .index-mode .filter-actions {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.5rem;
+        }
+
+        .index-mode .search-btn,
+        .index-mode .clear-btn {
+          width: 100%;
+          height: 40px;
+          border-radius: 4px;
+          font-family: inherit;
+          font-size: 0.8rem;
+          font-weight: 700;
+        }
+
+        .index-mode .search-btn {
+          background: #0a66c2;
+          color: #ffffff;
+        }
+
+        .index-mode .search-btn:hover {
+          background: #004182;
+          box-shadow: none;
+          transform: none;
+        }
+
+        .index-mode .clear-btn {
+          border-color: #c8d0d8;
+          color: #52606d;
+        }
+
+        .index-mode .jobs-container {
+          display: grid;
+          grid-column: 2;
+          grid-row: 1;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.85rem;
+          margin: 0;
+        }
+
+        .index-mode .job-card {
+          min-width: 0;
+          overflow: hidden;
+          padding: 1rem;
+          border: 1px solid #dce2e7;
+          border-radius: 6px;
+          background: #ffffff;
+          box-shadow: 0 2px 8px rgba(23, 33, 43, 0.04);
+        }
+
+        .index-mode .job-card::before {
+          top: 12px;
+          bottom: 12px;
+          width: 3px;
+          border-radius: 0 2px 2px 0;
+          background: #0a66c2;
+        }
+
+        .index-mode .job-card:hover {
+          border-color: #aeb9c3;
+          background: #ffffff;
+          box-shadow: 0 6px 18px rgba(23, 33, 43, 0.09);
+          transform: translateY(-1px);
+        }
+
+        .index-mode .job-card.visited {
+          opacity: 1;
+          border-color: #9cc3e8;
+          background: #eef3f8;
+        }
+
+        .index-mode .job-header {
+          align-items: flex-start;
+          gap: 0.8rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .index-mode .company-logo {
+          width: 44px;
+          height: 44px;
+          border-color: #dce2e7;
+          border-radius: 4px;
+        }
+
+        .index-mode .job-title {
+          margin-bottom: 0.25rem;
+          font-size: 1rem;
+          line-height: 1.3;
+        }
+
+        .index-mode .job-title a {
+          color: #0a66c2;
+        }
+
+        .index-mode .job-title a:hover {
+          color: #004182;
+          text-decoration: underline;
+        }
+
+        .index-mode .company-name,
+        .index-mode .company-name a {
+          color: #17212b;
+          font-size: 0.84rem;
+        }
+
+        .index-mode .job-industry,
+        .index-mode .job-location {
+          color: #667785;
+          font-size: 0.78rem;
+        }
+
+        .index-mode .job-footer {
+          gap: 0.8rem 1.25rem;
+          margin-top: 0.75rem;
+          padding-top: 0.75rem;
+          border-color: #eef1f3;
+        }
+
+        .index-mode .job-meta {
+          color: #667785;
+          font-family: inherit;
+          font-size: 0.73rem;
+        }
+
+        .index-mode .scroll-sentinel {
+          grid-column: 2;
+          grid-row: 2;
+          margin: 0;
+          color: #667785;
+        }
+
+        @media (max-width: 1180px) {
+          .index-mode .jobs-container {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 820px) {
+          .index-mode .index-navbar .nav-content {
+            padding: 0 1rem;
+          }
+
+          .index-mode .index-nav-actions .job-count {
+            display: none;
+          }
+
+          .index-mode .container {
+            width: auto;
+            min-width: 0;
+            margin: 0;
+            display: block;
+            padding: 1rem;
+          }
+
+          .index-mode .filters {
+            width: 100%;
+            min-width: 0;
+            position: static;
+            margin-bottom: 1rem;
+          }
+
+          .index-mode .filter-grid,
+          .index-mode .filter-group,
+          .index-mode .industry-filter,
+          .index-mode .filter-actions,
+          .index-mode .filter-group input,
+          .index-mode .filter-group select {
+            min-width: 0;
+            max-width: 100%;
+          }
+
+          .index-mode .filter-group input,
+          .index-mode .filter-group select {
+            width: 100%;
+          }
+
+          .index-mode .jobs-container {
+            min-width: 0;
+            grid-template-columns: 1fr;
+          }
+
+          .index-mode .scroll-sentinel {
+            margin-top: 1rem;
+          }
+        }
+
+        .index-mode {
+          --index-bg: #f3f2ef;
+          --index-surface: #ffffff;
+          --index-surface-soft: #f8f9fa;
+          --index-text: #1d2226;
+          --index-text-muted: #5e6c78;
+          --index-border: #d6d9dc;
+          --index-border-strong: #aeb7bf;
+          --index-accent: #0a66c2;
+          --index-accent-hover: #004182;
+          --index-focus: rgba(10, 102, 194, 0.18);
+          --index-shadow: rgba(29, 34, 38, 0.08);
+          --index-visited: #eef3f8;
+          --bg-primary: var(--index-bg);
+          --bg-secondary: var(--index-surface);
+          --bg-tertiary: var(--index-surface-soft);
+          --text-primary: var(--index-text);
+          --text-secondary: var(--index-text-muted);
+          --text-tertiary: var(--index-text-muted);
+          --text-muted: var(--index-text-muted);
+          --border-primary: var(--index-border);
+          --border-secondary: var(--index-border-strong);
+          --border-accent: var(--index-border-strong);
+          --accent-primary: var(--index-accent);
+          --accent-secondary: var(--index-accent);
+          --shadow-accent: var(--index-focus);
+          background: var(--index-bg);
+          color: var(--index-text);
+        }
+
+        [data-theme="dark"] .index-mode {
+          --index-bg: #171717;
+          --index-surface: #242424;
+          --index-surface-soft: #2c2c2c;
+          --index-text: #f3f3f3;
+          --index-text-muted: #b7bec5;
+          --index-border: #3e4144;
+          --index-border-strong: #5d6267;
+          --index-accent: #70b5f9;
+          --index-accent-hover: #a8d5ff;
+          --index-focus: rgba(112, 181, 249, 0.22);
+          --index-shadow: rgba(0, 0, 0, 0.28);
+          --index-visited: #202c38;
+          color-scheme: dark;
+        }
+
+        .index-mode .index-navbar {
+          border-color: var(--index-border);
+          background: var(--index-surface);
+          box-shadow: 0 2px 8px var(--index-shadow);
+        }
+
+        .index-brand {
+          color: var(--index-text);
+        }
+
+        .index-brand-mark {
+          width: 36px;
+          height: 36px;
+          border-radius: 4px;
+          background: #0a66c2;
+          color: #ffffff;
+          font-family: Arial, sans-serif;
+          font-size: 1.05rem;
+          line-height: 1;
+          text-transform: lowercase;
+        }
+
+        .index-brand-copy {
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          line-height: 1.15;
+        }
+
+        .index-brand-copy strong {
+          color: var(--index-text);
+          font-size: 0.92rem;
+          font-weight: 700;
+        }
+
+        .index-brand-copy small {
+          margin-top: 0.2rem;
+          color: var(--index-text-muted);
+          font-size: 0.68rem;
+          font-weight: 500;
+        }
+
+        .index-mode .index-nav-actions .job-count {
+          color: var(--index-text-muted);
+        }
+
+        .index-theme-toggle {
+          min-width: 82px;
+          height: 36px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
+          padding: 0 0.7rem;
+          border: 1px solid var(--index-border-strong);
+          border-radius: 18px;
+          background: var(--index-surface-soft);
+          color: var(--index-text);
+          cursor: pointer;
+          font: 600 0.75rem/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+        }
+
+        .index-theme-toggle:hover,
+        .index-theme-toggle:focus-visible {
+          border-color: var(--index-accent);
+          color: var(--index-accent);
+          outline: none;
+        }
+
+        .index-mode .filters {
+          border-color: var(--index-border);
+          background: var(--index-surface);
+          box-shadow: 0 3px 12px var(--index-shadow);
+        }
+
+        .index-filter-header,
+        .index-mode .filter-group,
+        .index-mode .industry-filter,
+        .index-mode .filter-actions {
+          border-color: var(--index-border);
+        }
+
+        .index-filter-header strong,
+        .index-mode .industry-filter h3 {
+          color: var(--index-text) !important;
+        }
+
+        .index-filter-reset,
+        .index-mode .job-title a {
+          color: var(--index-accent);
+        }
+
+        .index-filter-reset:hover,
+        .index-mode .job-title a:hover {
+          color: var(--index-accent-hover);
+        }
+
+        .index-mode .filter-group label,
+        .index-mode .industry-mode label,
+        .index-mode .industry-checkbox,
+        .index-mode .job-industry,
+        .index-mode .job-location,
+        .index-mode .job-meta,
+        .index-mode .scroll-sentinel {
+          color: var(--index-text-muted);
+        }
+
+        .index-mode input[type="radio"],
+        .index-mode input[type="checkbox"] {
+          accent-color: #0a66c2;
+        }
+
+        .index-mode .filter-group input,
+        .index-mode .filter-group select {
+          border-color: var(--index-border-strong);
+          background: var(--index-surface-soft);
+          color: var(--index-text);
+        }
+
+        .index-mode .filter-group input::placeholder {
+          color: var(--index-text-muted);
+          opacity: 0.85;
+        }
+
+        .index-mode .filter-group input:focus,
+        .index-mode .filter-group select:focus {
+          border-color: var(--index-accent);
+          box-shadow: 0 0 0 2px var(--index-focus);
+        }
+
+        .index-mode .industry-checkboxes {
+          border-color: var(--index-border);
+          background: var(--index-surface-soft);
+          scrollbar-color: var(--index-border-strong) var(--index-surface-soft);
+        }
+
+        .index-mode .search-btn {
+          background: #0a66c2;
+          color: #ffffff;
+        }
+
+        .index-mode .search-btn:hover {
+          background: #004182;
+        }
+
+        .index-mode .clear-btn {
+          border-color: var(--index-border-strong);
+          background: transparent;
+          color: var(--index-text-muted);
+        }
+
+        .index-mode .clear-btn:hover {
+          border-color: var(--index-accent);
+          background: var(--index-surface-soft);
+          color: var(--index-accent);
+        }
+
+        .index-mode .job-card,
+        .index-mode .job-card:hover {
+          border-color: var(--index-border);
+          background: var(--index-surface);
+        }
+
+        .index-mode .job-card {
+          box-shadow: 0 2px 8px var(--index-shadow);
+        }
+
+        .index-mode .job-card:hover {
+          border-color: var(--index-border-strong);
+          box-shadow: 0 6px 18px var(--index-shadow);
+        }
+
+        .index-mode .job-card::before {
+          background: #0a66c2;
+        }
+
+        .index-mode .job-card.visited {
+          border-color: var(--index-accent);
+          background: var(--index-visited);
+        }
+
+        .index-mode .job-card.visited .job-title a {
+          color: var(--index-accent);
+        }
+
+        .index-mode .company-logo {
+          border-color: var(--index-border);
+          background: #ffffff;
+        }
+
+        .index-mode .company-name,
+        .index-mode .company-name a {
+          color: var(--index-text);
+        }
+
+        .index-mode .job-footer {
+          border-color: var(--index-border);
+        }
+
+        /* LinkedIn-style search and filter controls for /index. */
+        .index-mode .container {
+          width: 100%;
+          max-width: none;
+          display: block;
+          margin: 0 auto;
+          padding: 0 0 1.5rem;
+        }
+
+        .index-mode .index-filter-toolbar {
+          position: sticky;
+          top: 64px;
+          z-index: 90;
+          width: calc(100% - 3rem);
+          max-width: 900px;
+          margin: 0 auto 1rem;
+          padding: 0;
+          overflow: visible;
+          border: 1px solid var(--index-border);
+          border-top: 0;
+          border-radius: 0 0 6px 6px;
+          background: var(--index-surface);
+          box-shadow: 0 2px 7px var(--index-shadow);
+        }
+
+        .index-linkedin-filter-row {
+          width: 100%;
+          max-width: none;
+          margin: 0 auto;
+          padding-right: clamp(0.75rem, 2vw, 1.5rem);
+          padding-left: clamp(0.75rem, 2vw, 1.5rem);
+        }
+
+        .index-linkedin-filter-row {
+          min-height: 54px;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          overflow-x: auto;
+          padding-top: 0.55rem;
+          padding-bottom: 0.55rem;
+          scrollbar-width: none;
+        }
+
+        .index-linkedin-filter-row::-webkit-scrollbar {
+          display: none;
+        }
+
+        .index-mode .index-linkedin-filter-row .filter-pill {
+          min-height: 36px;
+          border-color: var(--index-border-strong);
+          background: var(--index-surface);
+          color: var(--index-text);
+          font-size: 0.82rem;
+        }
+
+        .index-mode .index-linkedin-filter-row .filter-pill:hover,
+        .index-mode .index-linkedin-filter-row .filter-pill:focus-visible {
+          border-color: var(--index-text);
+          background: var(--index-surface-soft);
+          box-shadow: inset 0 0 0 1px var(--index-text);
+        }
+
+        .index-mode .index-linkedin-filter-row .filter-pill-primary {
+          border-color: #057642;
+          background: #057642;
+          color: #ffffff;
+        }
+
+        .index-mode .index-linkedin-filter-row .filter-pill-primary:hover,
+        .index-mode .index-linkedin-filter-row .filter-pill-primary:focus-visible {
+          border-color: #004c33;
+          background: #004c33;
+          color: #ffffff;
+          box-shadow: none;
+        }
+
+        .index-mode .index-linkedin-filter-row .filter-pill.applied {
+          border-color: #057642;
+          background: #e7f3ef;
+          color: #004c33;
+        }
+
+        [data-theme="dark"] .index-mode .index-linkedin-filter-row .filter-pill.applied {
+          border-color: #7fc9a8;
+          background: #173e30;
+          color: #b7ead3;
+        }
+
+        .index-linkedin-reset {
+          flex: 0 0 auto;
+          padding: 0.45rem 0.35rem;
+          color: var(--index-text-muted);
+          font-size: 0.82rem;
+          font-weight: 700;
+          text-decoration: none;
+          white-space: nowrap;
+        }
+
+        .index-linkedin-reset:hover {
+          color: var(--index-accent);
+          text-decoration: underline;
+        }
+
+        .index-filter-result-count {
+          flex: 0 0 auto;
+          margin-left: auto;
+          color: var(--index-text-muted);
+          font-size: 0.76rem;
+          white-space: nowrap;
+        }
+
+        .index-mode .filter-drawer,
+        .index-mode .filter-drawer-footer {
+          border-color: var(--index-border);
+          background: var(--index-surface);
+          color: var(--index-text);
+        }
+
+        .index-mode .filter-drawer-header,
+        .index-mode .drawer-filter-section {
+          border-color: var(--index-border);
+        }
+
+        .index-mode .filter-drawer-close,
+        .index-mode .filter-reset-link,
+        .index-mode .drawer-field-label,
+        .index-mode .drawer-choice,
+        .index-mode .filter-drawer .industry-checkbox,
+        .index-mode .filter-drawer .industry-checkbox label {
+          color: var(--index-text-muted);
+        }
+
+        .index-mode .filter-drawer-close:hover {
+          background: var(--index-surface-soft);
+        }
+
+        .index-mode .drawer-filter-section > input[type="text"],
+        .index-mode .drawer-filter-section > input[type="number"],
+        .index-mode .filter-drawer .industry-checkboxes {
+          border-color: var(--index-border-strong);
+          background: var(--index-surface-soft);
+          color: var(--index-text);
+        }
+
+        .index-mode .industry-mode-switch {
+          border-color: var(--index-border-strong);
+        }
+
+        .index-mode .industry-mode-switch span {
+          color: var(--index-text-muted);
+        }
+
+        .index-mode .index-job-list {
+          width: calc(100% - 3rem);
+          max-width: 900px;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0.55rem;
+          margin: 0 auto;
+        }
+
+        .index-mode .index-job-list .job-card {
+          min-height: 128px;
+          padding: 1rem 1.2rem;
+          border-radius: 6px;
+          box-shadow: 0 1px 3px var(--index-shadow);
+        }
+
+        .index-mode .index-job-list .job-card:hover {
+          transform: none;
+          box-shadow: 0 3px 10px var(--index-shadow);
+        }
+
+        .index-mode .index-job-list .job-header {
+          flex-direction: row;
+          align-items: flex-start;
+          margin-bottom: 0.55rem;
+          text-align: left;
+        }
+
+        .index-mode .index-job-list .company-logo {
+          width: 52px;
+          height: 52px;
+        }
+
+        .index-mode .index-job-list .job-footer {
+          margin-top: 0.55rem;
+          padding-top: 0.55rem;
+        }
+
+        .index-mode .scroll-sentinel {
+          width: calc(100% - 3rem);
+          max-width: 900px;
+          margin: 1rem auto 0;
+        }
+
+        @media (max-width: 700px) {
+          .index-filter-result-count {
+            display: none;
+          }
+        }
+
+        @media (max-width: 520px) {
+          .index-mode .container {
+            width: 100%;
+            padding: 0 0 1rem;
+          }
+
+          .index-mode .index-filter-toolbar {
+            width: calc(100% - 1.5rem);
+            position: static;
+            margin-bottom: 0.75rem;
+            border-top: 1px solid var(--index-border);
+            border-radius: 6px;
+          }
+
+          .index-mode .index-job-list .job-card {
+            min-height: 0;
+            padding: 0.9rem;
+          }
+
+          .index-mode .index-job-list .company-logo {
+            width: 46px;
+            height: 46px;
+          }
+
+          .index-mode .index-job-list,
+          .index-mode .scroll-sentinel {
+            width: calc(100% - 1.5rem);
+          }
+        }
+
         .footer {
           text-align: center;
           padding: 2rem 0;
@@ -2879,20 +4109,41 @@ export const generateHTML = (data) => {
         }
       </style>
     </head>
-    <body class="${useInfiniteScroll ? 'scroll-mode' : 'paged-mode'}">
+    <body class="${useInfiniteScroll ? 'scroll-mode' : 'paged-mode'}${isIndexMode ? ' index-mode' : ''}">
       ${useInfiniteScroll ? `
-        <nav class="navbar">
-          <div class="nav-content">
-            <a href="${jobsPath}" class="logo">-----</a>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <div class="job-count" id="job-count">${totalJobs.toLocaleString()} positions</div>
-              <button class="theme-toggle" onclick="toggleTheme()">
-                <span id="theme-icon">🌙</span>
-                <span id="theme-text">Dark</span>
-              </button>
+        ${isIndexMode ? `
+          <nav class="navbar index-navbar" aria-label="Primary navigation">
+            <div class="nav-content">
+              <a href="/index" class="index-brand" aria-label="LinkedIn Job Board home">
+                <span class="index-brand-mark" aria-hidden="true">in</span>
+                <span class="index-brand-copy">
+                  <strong>LinkedIn Job Board</strong>
+                  <small>Remote US roles</small>
+                </span>
+              </a>
+              <div class="index-nav-actions">
+                <span class="job-count" id="job-count">${totalJobs.toLocaleString()} positions</span>
+                <button type="button" class="index-theme-toggle" onclick="toggleTheme()" aria-label="Toggle color theme" title="Toggle color theme">
+                  <span id="theme-icon" aria-hidden="true">☀</span>
+                  <span id="theme-text">Light</span>
+                </button>
+              </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        ` : `
+          <nav class="navbar">
+            <div class="nav-content">
+              <a href="${jobsPath}" class="logo">-----</a>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="job-count" id="job-count">${totalJobs.toLocaleString()} positions</div>
+                <button class="theme-toggle" onclick="toggleTheme()">
+                  <span id="theme-icon">🌙</span>
+                  <span id="theme-text">Dark</span>
+                </button>
+              </div>
+            </div>
+          </nav>
+        `}
       ` : `
         <nav class="navbar page-topbar" aria-label="Primary navigation">
           <div class="nav-content">
@@ -2939,6 +4190,10 @@ export const generateHTML = (data) => {
                 <img src="/assets/profile-avatar.png" class="page-profile-image" alt="Profile">
                 <span class="page-nav-label">Me</span>
               </div>
+              <button type="button" class="page-nav-item page-theme-toggle" onclick="toggleTheme()" aria-label="Toggle color theme" title="Toggle color theme">
+                <span class="page-nav-glyph" id="theme-icon" aria-hidden="true">&#9788;</span>
+                <span class="page-nav-label" id="theme-text">Light</span>
+              </button>
               <span class="page-nav-divider page-nav-secondary" aria-hidden="true"></span>
               <a class="page-nav-item page-nav-secondary" href="/company" title="Apps">
                 <span class="page-nav-glyph" aria-hidden="true">&#9638;</span><span class="page-nav-label">Apps</span>
@@ -2951,52 +4206,135 @@ export const generateHTML = (data) => {
 
       <div class="container">
         ${useInfiniteScroll ? `
-          <div class="filters">
-            <form class="filter-grid" method="get" action="${jobsPath}" id="filter-form">
-              <div class="filter-group">
-                <label for="emp">Company Size</label>
-                <input type="number" id="emp" name="emp" value="${empMax || ""}" min="1" placeholder="Max employees" />
+          <div class="filters${isIndexMode ? ' index-filter-toolbar' : ''}">
+            ${isIndexMode ? `
+              <div class="index-linkedin-filter-row" aria-label="Job filters">
+                <a href="/index" class="filter-pill filter-pill-primary">Jobs <span class="filter-chevron" aria-hidden="true"></span></a>
+                <button type="button" class="filter-pill ${lastday ? 'applied' : ''}" onclick="openPageFilters('date-filter-section')">
+                  <span>${dateFilterLabel}</span><span class="filter-chevron" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="filter-pill ${companyQuery ? 'applied' : ''}" onclick="openPageFilters('company-filter-section')">
+                  <span>${companyQuery ? escapeAttribute(companyQuery) : 'Company'}</span><span class="filter-chevron" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="filter-pill ${empMax ? 'applied' : ''}" onclick="openPageFilters('size-filter-section')">
+                  <span>${empMax ? `Up to ${empMax.toLocaleString()}` : 'Company size'}</span><span class="filter-chevron" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="filter-pill ${(industries && industries.length) ? 'applied' : ''}" onclick="openPageFilters('industry-filter-section')">
+                  <span>${industries && industries.length ? `${industries.length} industries` : 'Industry'}</span><span class="filter-chevron" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="filter-pill all-filters-pill ${hasActiveFilters ? 'applied' : ''}" onclick="openPageFilters()">
+                  All filters${hasActiveFilters ? '<span class="filter-count-dot" aria-hidden="true"></span>' : ''}
+                </button>
+                ${hasActiveFilters ? '<a class="index-linkedin-reset" href="/index">Reset</a>' : ''}
+                <span class="index-filter-result-count job-count" id="job-count">${totalJobs.toLocaleString()} positions</span>
               </div>
-              <div class="filter-group">
-                <label for="company">Company Name</label>
-                <input type="text" id="company" name="company" value="${escapeAttribute(companyQuery)}" placeholder="Filter by company" />
+
+              <div class="filter-drawer-backdrop" id="filter-drawer-backdrop" aria-hidden="true" onclick="if (event.target === this) closePageFilters()">
+                <aside class="filter-drawer" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title">
+                  <header class="filter-drawer-header">
+                    <h2 id="filter-drawer-title">All filters</h2>
+                    <button type="button" class="filter-drawer-close" aria-label="Close filters" onclick="closePageFilters()">&times;</button>
+                  </header>
+                  <form method="get" action="/index" id="filter-form" class="filter-drawer-form">
+                    <div class="filter-drawer-body">
+                      <section class="drawer-filter-section" id="title-filter-section">
+                        <h3>Job title</h3>
+                        <input type="text" name="title" value="${escapeAttribute(titleQuery)}" placeholder="Search job titles">
+                      </section>
+                      <section class="drawer-filter-section" id="location-filter-section">
+                        <h3>Location</h3>
+                        <input type="text" name="location" value="${escapeAttribute(locationQuery)}" placeholder="City, state, or Remote">
+                      </section>
+                      <section class="drawer-filter-section" id="company-filter-section">
+                        <h3>Company</h3>
+                        <input type="text" name="company" value="${escapeAttribute(companyQuery)}" placeholder="Search companies">
+                      </section>
+                      <section class="drawer-filter-section" id="date-filter-section">
+                        <h3>Date posted</h3>
+                        <div class="drawer-radio-grid">
+                          ${[
+                            [0, 'Any time'], [1, 'Past 24 hours'], [3, 'Past 3 days'],
+                            [7, 'Past week'], [14, 'Past 2 weeks'], [30, 'Past month']
+                          ].map(([value, label]) => `
+                            <label class="drawer-choice">
+                              <input type="radio" name="lastday" value="${value}" ${lastday == value ? 'checked' : ''}>
+                              <span>${label}</span>
+                            </label>
+                          `).join('')}
+                        </div>
+                      </section>
+                      <section class="drawer-filter-section" id="size-filter-section">
+                        <h3>Company size</h3>
+                        <label class="drawer-field-label" for="index-drawer-emp">Maximum employees</label>
+                        <input type="number" id="index-drawer-emp" name="emp" value="${empMax || ''}" min="1" placeholder="No maximum">
+                      </section>
+                      <section class="drawer-filter-section" id="industry-filter-section">
+                        <div class="drawer-section-heading">
+                          <h3>Industry</h3>
+                          <div class="industry-mode-switch" aria-label="Industry filter mode">
+                            <label><input type="radio" name="industryMode" value="include" ${industryMode === 'include' ? 'checked' : ''}><span>Include</span></label>
+                            <label><input type="radio" name="industryMode" value="exclude" ${industryMode === 'exclude' ? 'checked' : ''}><span>Exclude</span></label>
+                          </div>
+                        </div>
+                        <div class="industry-checkboxes" id="industry-checkboxes">
+                          <div class="drawer-loading">Loading industries...</div>
+                        </div>
+                      </section>
+                    </div>
+                    <footer class="filter-drawer-footer">
+                      <a href="/index" class="filter-reset-link">Reset</a>
+                      <button type="submit" class="filter-show-results">Show results</button>
+                    </footer>
+                  </form>
+                </aside>
               </div>
-              <div class="filter-group">
-                <label for="title">Job Title</label>
-                <input type="text" id="title" name="title" value="${escapeAttribute(titleQuery)}" placeholder="Filter by job title" />
-              </div>
-              <div class="filter-group">
-                <label for="lastday">Within</label>
-                <select id="lastday" name="lastday">
-                  <option value="0" ${lastday == 0 ? "selected" : ""}>All time</option>
-                  <option value="1" ${lastday == 1 ? "selected" : ""}>Last 24 hours</option>
-                  <option value="3" ${lastday == 3 ? "selected" : ""}>Last 3 days</option>
-                  <option value="7" ${lastday == 7 ? "selected" : ""}>Last week</option>
-                  <option value="14" ${lastday == 14 ? "selected" : ""}>Last 2 weeks</option>
-                  <option value="30" ${lastday == 30 ? "selected" : ""}>Last month</option>
-                </select>
-              </div>
-              <div class="industry-filter">
-                <h3 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.1rem;">Industry Filter</h3>
-                <div class="industry-controls">
-                  <div class="industry-mode">
-                    <input type="radio" id="include-mode" name="industryMode" value="include" ${industryMode === 'include' ? 'checked' : ''}>
-                    <label for="include-mode">Include selected industries</label>
+            ` : `
+              <form class="filter-grid" method="get" action="${jobsPath}" id="filter-form">
+                <div class="filter-group">
+                  <label for="emp">Company Size</label>
+                  <input type="number" id="emp" name="emp" value="${empMax || ""}" min="1" placeholder="Max employees" />
+                </div>
+                <div class="filter-group">
+                  <label for="company">Company Name</label>
+                  <input type="text" id="company" name="company" value="${escapeAttribute(companyQuery)}" placeholder="Filter by company" />
+                </div>
+                <div class="filter-group">
+                  <label for="title">Job Title</label>
+                  <input type="text" id="title" name="title" value="${escapeAttribute(titleQuery)}" placeholder="Filter by job title" />
+                </div>
+                <div class="filter-group">
+                  <label for="lastday">Within</label>
+                  <select id="lastday" name="lastday">
+                    <option value="0" ${lastday == 0 ? "selected" : ""}>All time</option>
+                    <option value="1" ${lastday == 1 ? "selected" : ""}>Last 24 hours</option>
+                    <option value="3" ${lastday == 3 ? "selected" : ""}>Last 3 days</option>
+                    <option value="7" ${lastday == 7 ? "selected" : ""}>Last week</option>
+                    <option value="14" ${lastday == 14 ? "selected" : ""}>Last 2 weeks</option>
+                    <option value="30" ${lastday == 30 ? "selected" : ""}>Last month</option>
+                  </select>
+                </div>
+                <div class="industry-filter">
+                  <h3 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.1rem;">Industry Filter</h3>
+                  <div class="industry-controls">
+                    <div class="industry-mode">
+                      <input type="radio" id="include-mode" name="industryMode" value="include" ${industryMode === 'include' ? 'checked' : ''}>
+                      <label for="include-mode">Include selected industries</label>
+                    </div>
+                    <div class="industry-mode">
+                      <input type="radio" id="exclude-mode" name="industryMode" value="exclude" ${industryMode === 'exclude' ? 'checked' : ''}>
+                      <label for="exclude-mode">Exclude selected industries</label>
+                    </div>
                   </div>
-                  <div class="industry-mode">
-                    <input type="radio" id="exclude-mode" name="industryMode" value="exclude" ${industryMode === 'exclude' ? 'checked' : ''}>
-                    <label for="exclude-mode">Exclude selected industries</label>
+                  <div class="industry-checkboxes" id="industry-checkboxes">
+                    <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading industries...</div>
                   </div>
                 </div>
-                <div class="industry-checkboxes" id="industry-checkboxes">
-                  <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading industries...</div>
+                <div class="filter-actions">
+                  <button type="submit" class="search-btn">Filter Jobs</button>
+                  ${hasActiveFilters ? `<a href="${jobsPath}" class="clear-btn">Clear All</a>` : ""}
                 </div>
-              </div>
-              <div class="filter-actions">
-                <button type="submit" class="search-btn">Filter Jobs</button>
-                ${hasActiveFilters ? `<a href="${jobsPath}" class="clear-btn">Clear All</a>` : ""}
-              </div>
-            </form>
+              </form>
+            `}
           </div>
         ` : `
           <div class="filters page-filter-shell">
@@ -3083,7 +4421,7 @@ export const generateHTML = (data) => {
         `}
 
         ${useInfiniteScroll ? `
-          <div class="jobs-container" id="jobs-container">
+          <div class="jobs-container${isIndexMode ? ' index-job-list' : ''}" id="jobs-container">
             ${jobCards}
           </div>
           <div class="scroll-sentinel" id="scroll-sentinel" role="status" aria-live="polite">
@@ -3186,7 +4524,7 @@ export const generateHTML = (data) => {
         </aside>
       `}
 
-      ${useInfiniteScroll ? `
+      ${useInfiniteScroll && !isIndexMode ? `
         <div class="footer">
           <p>LinkedIn Jobs Database - Scraped job listings with advanced filtering</p>
         </div>
@@ -3195,8 +4533,8 @@ export const generateHTML = (data) => {
       ${useInfiniteScroll ? '' : '<script src="/socket.io/socket.io.js"></script>'}
       <script>
         // Theme management
-        function getTheme() {
-          return localStorage.getItem('theme') || 'dark';
+        function getTheme(fallback = 'dark') {
+          return localStorage.getItem('theme') || fallback;
         }
 
         function setTheme(theme) {
@@ -3208,14 +4546,10 @@ export const generateHTML = (data) => {
         function updateThemeUI(theme) {
           const themeIcon = document.getElementById('theme-icon');
           const themeText = document.getElementById('theme-text');
+          if (!themeIcon || !themeText) return;
 
-          if (theme === 'light') {
-            themeIcon.textContent = '☀️';
-            themeText.textContent = 'Light';
-          } else {
-            themeIcon.textContent = '🌙';
-            themeText.textContent = 'Dark';
-          }
+          themeIcon.textContent = String.fromCodePoint(theme === 'light' ? 0x263c : 0x263e);
+          themeText.textContent = theme === 'light' ? 'Light' : 'Dark';
         }
 
         function toggleTheme() {
@@ -3661,13 +4995,16 @@ export const generateHTML = (data) => {
         }
 
         const infiniteScrollEnabled = ${useInfiniteScroll};
+        const indexModeEnabled = ${isIndexMode};
 
         // Initialize theme on page load
         document.addEventListener('DOMContentLoaded', function() {
-          if (infiniteScrollEnabled) {
+          if (indexModeEnabled) {
+            setTheme(getTheme('light'));
+          } else if (infiniteScrollEnabled) {
             setTheme(getTheme());
           } else {
-            document.documentElement.setAttribute('data-theme', 'light');
+            setTheme(getTheme('light'));
           }
           loadVisitedJobs();
           loadIndustries();

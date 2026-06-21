@@ -190,7 +190,7 @@ app.get('/api/jobs', async (req, res) => {
   }
 });
 
-const renderJobsPage = (useInfiniteScroll) => async (req, res) => {
+const renderJobsPage = (useInfiniteScroll, pageVariant = useInfiniteScroll ? 'view' : 'page') => async (req, res) => {
   try {
     const queryParams = parseJobQuery(req.query);
 
@@ -211,6 +211,7 @@ const renderJobsPage = (useInfiniteScroll) => async (req, res) => {
       jobCards,
       pagination,
       useInfiniteScroll,
+      pageVariant,
       queryParams
     });
 
@@ -224,6 +225,7 @@ const renderJobsPage = (useInfiniteScroll) => async (req, res) => {
 };
 
 app.get('/view', renderJobsPage(true));
+app.get('/index', renderJobsPage(true, 'index'));
 app.get('/page', renderJobsPage(false));
 
 app.get('/company', async (req, res) => {
