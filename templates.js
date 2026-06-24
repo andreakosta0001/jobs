@@ -5462,7 +5462,7 @@ export const generateHTML = (data) => {
 
         function scheduleLiveUpdates() {
           window.clearInterval(liveUpdateTimer);
-          liveUpdateTimer = window.setInterval(refreshJobs, 5000);
+          liveUpdateTimer = window.setInterval(refreshJobs, 60000);
         }
 
         const jobFeedbackStorageKey = 'pageJobResultsFeedback';
