@@ -1,5 +1,6 @@
 import express from 'express';
 import { createServer } from 'node:http';
+import { fileURLToPath } from 'node:url';
 import fetch from 'node-fetch';
 import { Server as SocketIOServer } from 'socket.io';
 import { Job, ChatUser, connectDatabase } from './database.js';
@@ -17,9 +18,10 @@ const io = new SocketIOServer(httpServer, {
 });
 const PORT = process.env.PORT || 3000;
 const JOBS_PER_PAGE = 20;
+const assetsDirectory = fileURLToPath(new URL('./assets/', import.meta.url));
 
 app.use(express.json());
-app.use('/assets', express.static('assets'));
+app.use('/assets', express.static(assetsDirectory));
 
 registerChatHandlers(io, { ChatUser });
 app.get('/test', (req, res) => {
