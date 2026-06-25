@@ -5439,6 +5439,7 @@ export const generateHTML = (data) => {
         }
 
         // Polling works consistently both in the local Express server and on Vercel.
+        const liveUpdateIntervalMs = 8 * 60 * 1000;
         let liveUpdateTimer;
         let liveUpdateInFlight = false;
         let latestJobsSnapshot;
@@ -5462,7 +5463,7 @@ export const generateHTML = (data) => {
 
         function scheduleLiveUpdates() {
           window.clearInterval(liveUpdateTimer);
-          liveUpdateTimer = window.setInterval(refreshJobs, 60000);
+          liveUpdateTimer = window.setInterval(refreshJobs, liveUpdateIntervalMs);
         }
 
         const jobFeedbackStorageKey = 'pageJobResultsFeedback';

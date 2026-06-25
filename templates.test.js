@@ -74,12 +74,15 @@ test('/view variant keeps the original scroll view', () => {
 
 test('/page includes the persisted light and dark mode control', () => {
   const document = load(renderPage());
+  const inlineScripts = document('script:not([src])').map((index, script) => document(script).html() || '').get().join('\n');
 
   assert.equal(document('body').hasClass('paged-mode'), true);
   assert.equal(document('.page-theme-toggle').length, 1);
   assert.equal(document('.page-theme-toggle').attr('onclick'), 'toggleTheme()');
   assert.equal(document('.page-theme-toggle #theme-icon').length, 1);
   assert.equal(document('.page-theme-toggle #theme-text').length, 1);
+  assert.match(inlineScripts, /const liveUpdateIntervalMs = 8 \* 60 \* 1000;/);
+  assert.match(inlineScripts, /setInterval\(refreshJobs, liveUpdateIntervalMs\)/);
   document('script:not([src])').each((index, script) => {
     new Function(document(script).html() || '');
   });
