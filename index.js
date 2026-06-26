@@ -1,21 +1,14 @@
 import express from 'express';
-import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 import fetch from 'node-fetch';
-import { Server as SocketIOServer } from 'socket.io';
-import { Job, ChatUser, connectDatabase } from './database.js';
+import { Job, connectDatabase } from './database.js';
 import { generateJobCard, generatePagination, generateHTML } from './templates.js';
 import { generateCompanyCard, generateCompanyPagination, generateCompanyHTML, generateCompanyJobsHTML, generateCompanyJobsPagination } from './company_templates.js';
 import { fetchLinkedInJobPosting } from './linkedin.js';
-import { registerChatHandlers } from './chat.js';
 
 await connectDatabase();
 
 const app = express();
-const httpServer = createServer(app);
-const io = new SocketIOServer(httpServer, {
-  transports: ['websocket', 'polling']
-});
 const PORT = process.env.PORT || 3000;
 const JOBS_PER_PAGE = 20;
 const assetsDirectory = fileURLToPath(new URL('./assets/', import.meta.url));
@@ -23,7 +16,6 @@ const assetsDirectory = fileURLToPath(new URL('./assets/', import.meta.url));
 app.use(express.json());
 app.use('/assets', express.static(assetsDirectory));
 
-registerChatHandlers(io, { ChatUser });
 app.get('/test', (req, res) => {
   res.json({ msg: "Successfully deployed" });
 });
@@ -320,7 +312,7 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-httpServer.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 

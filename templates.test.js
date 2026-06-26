@@ -81,8 +81,11 @@ test('/page includes the persisted light and dark mode control', () => {
   assert.equal(document('.page-theme-toggle').attr('onclick'), 'toggleTheme()');
   assert.equal(document('.page-theme-toggle #theme-icon').length, 1);
   assert.equal(document('.page-theme-toggle #theme-text').length, 1);
+  assert.equal(document('script[src="/socket.io/socket.io.js"]').length, 0);
   assert.match(inlineScripts, /const liveUpdateIntervalMs = 8 \* 60 \* 1000;/);
   assert.match(inlineScripts, /setInterval\(refreshJobs, liveUpdateIntervalMs\)/);
+  assert.match(inlineScripts, /function startLocalChat\(\)/);
+  assert.doesNotMatch(inlineScripts, /window\.io|chatSocket|startRealtimeChat/);
   document('script:not([src])').each((index, script) => {
     new Function(document(script).html() || '');
   });

@@ -4489,7 +4489,7 @@ export const generateHTML = (data) => {
               <input type="text" id="chat-display-name" maxlength="60" autocomplete="nickname" placeholder="Display name" required>
               <button type="submit">Save</button>
             </form>
-            <div class="chat-connection" id="chat-connection" role="status">Connecting to realtime chat...</div>
+            <div class="chat-connection" id="chat-connection" role="status">Socket messaging is off.</div>
             <div class="chat-list-view" id="chat-list-view">
               <div class="chat-user-search">
                 <label class="visually-hidden" for="chat-user-search">Search developers</label>
@@ -4530,7 +4530,6 @@ export const generateHTML = (data) => {
         </div>
       ` : ''}
 
-      ${useInfiniteScroll ? '' : '<script src="/socket.io/socket.io.js"></script>'}
       <script>
         // Theme management
         function getTheme(fallback = 'dark') {
@@ -4560,16 +4559,12 @@ export const generateHTML = (data) => {
 
         const chatSenderIdStorageKey = 'jobChatSenderId';
         const chatSenderNameStorageKey = 'jobChatDisplayName';
-        let chatSocket;
         let chatSenderId = '';
         let chatSenderName = '';
         let chatLocationCode = '';
-        let chatUnreadCount = 0;
         let chatMessageIds = new Set();
-        const chatBufferedMessages = new Map();
         let chatUsers = [];
         let activeChatUser = null;
-        const chatUnreadByUser = new Map();
 
         function getChatIdentity() {
           let senderId = localStorage.getItem(chatSenderIdStorageKey);
@@ -4594,7 +4589,26 @@ export const generateHTML = (data) => {
           return { senderId, senderName, locationCode: locationCode.toUpperCase() };
         }
 
-        function startRealtimeChat() {
+        function getChatNamePrefix() {
+          return chatLocationCode === 'US' ? 'engineer' : 'developer';
+        }
+
+        function getDefaultChatDisplayName() {
+          return getChatNamePrefix() + '1';
+        }
+
+        function buildLocalChatUsers() {
+          const prefix = getChatNamePrefix();
+          const now = Date.now();
+          return [2, 3, 4, 5, 6, 7].map((number, index) => ({
+            id: 'local-' + prefix + '-' + number,
+            name: prefix + number,
+            online: index < 3,
+            lastSeen: new Date(now - ((index + 1) * 18 * 60 * 1000)).toISOString()
+          }));
+        }
+
+        function startLocalChat() {
           const shell = document.getElementById('chat-shell');
           if (!shell) return;
 
@@ -4603,58 +4617,17 @@ export const generateHTML = (data) => {
             senderName: chatSenderName,
             locationCode: chatLocationCode
           } = getChatIdentity());
+          if (!chatSenderName) {
+            chatSenderName = getDefaultChatDisplayName();
+            localStorage.setItem(chatSenderNameStorageKey, chatSenderName);
+          }
           document.getElementById('chat-display-name').value = chatSenderName;
           document.getElementById('chat-message-input').addEventListener('input', updateChatSendState);
-
-          if (typeof window.io !== 'function') {
-            updateChatConnection('Realtime chat is unavailable', false);
-            return;
-          }
-
-          chatSocket = window.io({
-            auth: {
-              senderId: chatSenderId,
-              senderName: chatSenderName,
-              locationCode: chatLocationCode
-            }
-          });
-
-          chatSocket.on('connect', () => {
-            shell.classList.add('connected');
-            updateChatConnection('Connected', true);
-          });
-          chatSocket.on('disconnect', () => {
-            shell.classList.remove('connected');
-            updateChatConnection('Reconnecting...', false);
-          });
-          chatSocket.on('connect_error', () => {
-            shell.classList.remove('connected');
-            updateChatConnection('Unable to connect to realtime chat', false);
-          });
-          chatSocket.on('chat:presence', data => {
-            const count = Number(data?.count) || 0;
-            document.getElementById('chat-presence').textContent =
-              count + ' participant' + (count === 1 ? '' : 's') + ' online';
-          });
-          chatSocket.on('chat:identity', identity => {
-            chatSenderName = identity?.name || chatSenderName;
-            if (!chatSenderName) return;
-            localStorage.setItem(chatSenderNameStorageKey, chatSenderName);
-            document.getElementById('chat-display-name').value = chatSenderName;
-          });
-          chatSocket.on('chat:users', users => {
-            chatUsers = (Array.isArray(users) ? users : []).filter(user => user.id !== chatSenderId);
-            renderChatDeveloperList();
-            if (activeChatUser) {
-              const updatedUser = chatUsers.find(user => user.id === activeChatUser.id);
-              if (updatedUser) updateChatConversationHeader(updatedUser);
-            }
-          });
-          chatSocket.on('chat:history', data => renderChatHistory(data));
-          chatSocket.on('chat:message', handleIncomingChatMessage);
-          chatSocket.on('chat:error', error => {
-            updateChatConnection(error?.message || 'Realtime chat error', false);
-          });
+          chatUsers = buildLocalChatUsers();
+          document.getElementById('chat-presence').textContent = chatUsers.length + ' local contacts';
+          shell.classList.remove('connected');
+          updateChatConnection('Socket messaging is off', false);
+          renderChatDeveloperList();
         }
 
         function updateChatConnection(message, connected) {
@@ -4662,26 +4635,6 @@ export const generateHTML = (data) => {
           if (status) status.textContent = message;
           document.getElementById('chat-shell')?.classList.toggle('connected', connected);
           updateChatSendState();
-        }
-
-        function renderChatHistory(data) {
-          const container = document.getElementById('chat-messages');
-          if (!container) return;
-
-          if (!data?.participant || activeChatUser?.id !== data.participant.id) return;
-          activeChatUser = data.participant;
-          updateChatConversationHeader(activeChatUser);
-          container.innerHTML = '';
-          chatMessageIds = new Set();
-          (Array.isArray(data?.messages) ? data.messages : []).forEach(message => appendChatMessage(message));
-          flushBufferedMessagesForActiveConversation();
-          if (container.children.length === 0) {
-            const empty = document.createElement('div');
-            empty.className = 'chat-empty';
-            empty.textContent = 'No messages yet.';
-            container.appendChild(empty);
-          }
-          container.scrollTop = container.scrollHeight;
         }
 
         function appendChatMessage(message) {
@@ -4715,47 +4668,6 @@ export const generateHTML = (data) => {
           container.scrollTop = container.scrollHeight;
 
         }
-        function handleIncomingChatMessage(message) {
-          const own = message?.senderId === chatSenderId;
-          const otherUserId = own ? message?.recipientId : message?.senderId;
-          const conversationShell = document.getElementById('chat-conversation-shell');
-          const conversationVisible = activeChatUser?.id === otherUserId &&
-            conversationShell && !conversationShell.hidden &&
-            !conversationShell.classList.contains('collapsed') &&
-            document.visibilityState === 'visible';
-
-          if (conversationVisible) {
-            appendChatMessage(message);
-            return;
-          }
-
-          if (!own && otherUserId) {
-            const buffered = chatBufferedMessages.get(otherUserId) || [];
-            if (!buffered.some(item => item.id === message.id)) buffered.push(message);
-            chatBufferedMessages.set(otherUserId, buffered.slice(-100));
-            chatUnreadCount += 1;
-            chatUnreadByUser.set(otherUserId, (chatUnreadByUser.get(otherUserId) || 0) + 1);
-            updateChatUnread();
-            renderChatDeveloperList();
-          }
-        }
-
-        function flushBufferedMessagesForActiveConversation() {
-          const shell = document.getElementById('chat-conversation-shell');
-          if (!activeChatUser || !shell || shell.hidden ||
-              shell.classList.contains('collapsed') || document.visibilityState !== 'visible') return;
-
-          const messages = chatBufferedMessages.get(activeChatUser.id) || [];
-          if (messages.length === 0) return;
-          chatBufferedMessages.delete(activeChatUser.id);
-          const unread = chatUnreadByUser.get(activeChatUser.id) || 0;
-          chatUnreadByUser.delete(activeChatUser.id);
-          chatUnreadCount = Math.max(0, chatUnreadCount - unread);
-          updateChatUnread();
-          renderChatDeveloperList();
-          messages.forEach(message => appendChatMessage(message));
-        }
-
         function getChatInitials(name) {
           return String(name || 'Developer')
             .split(/\s+/)
@@ -4808,13 +4720,6 @@ export const generateHTML = (data) => {
             copy.append(name, status);
 
             button.append(avatar, copy);
-            const unread = chatUnreadByUser.get(user.id) || 0;
-            if (unread > 0) {
-              const badge = document.createElement('span');
-              badge.className = 'chat-user-unread';
-              badge.textContent = String(Math.min(unread, 99));
-              button.appendChild(badge);
-            }
             container.appendChild(button);
           });
         }
@@ -4839,7 +4744,7 @@ export const generateHTML = (data) => {
 
         function openChatConversation(userId) {
           const user = chatUsers.find(candidate => candidate.id === userId);
-          if (!user || !chatSocket?.connected) return;
+          if (!user) return;
 
           setChatOpen(true);
           updateChatConversationHeader(user);
@@ -4847,23 +4752,12 @@ export const generateHTML = (data) => {
           conversationShell.hidden = false;
           conversationShell.classList.remove('collapsed');
           const messages = document.getElementById('chat-messages');
-          messages.innerHTML = '<div class="chat-empty">Loading conversation...</div>';
+          messages.innerHTML = '<div class="chat-empty">No messages yet.</div>';
+          chatMessageIds = new Set();
 
-          const unread = chatUnreadByUser.get(userId) || 0;
-          chatUnreadByUser.delete(userId);
-          chatUnreadCount = Math.max(0, chatUnreadCount - unread);
-          updateChatUnread();
           renderChatDeveloperList();
-
-          chatSocket.timeout(5000).emit('chat:open', { recipientId: userId }, (error, response) => {
-            if (error || !response?.ok) {
-              updateChatConnection(response?.error || 'Unable to load conversation', chatSocket.connected);
-              closeChatConversation();
-              return;
-            }
-            updateChatSendState();
-            document.getElementById('chat-message-input')?.focus();
-          });
+          updateChatSendState();
+          document.getElementById('chat-message-input')?.focus();
         }
 
         function toggleChatConversation() {
@@ -4876,7 +4770,6 @@ export const generateHTML = (data) => {
           if (!collapsed) {
             const messages = document.getElementById('chat-messages');
             messages.scrollTop = messages.scrollHeight;
-            flushBufferedMessagesForActiveConversation();
             document.getElementById('chat-message-input')?.focus();
           }
           updateChatSendState();
@@ -4893,13 +4786,6 @@ export const generateHTML = (data) => {
             '<div class="chat-empty">Select a developer to start messaging.</div>';
           document.getElementById('chat-message-input').value = '';
           updateChatSendState();
-        }
-
-        function updateChatUnread() {
-          const badge = document.getElementById('chat-unread');
-          if (!badge) return;
-          badge.textContent = String(Math.min(chatUnreadCount, 99));
-          badge.hidden = chatUnreadCount === 0;
         }
 
         function setChatOpen(open) {
@@ -4942,15 +4828,7 @@ export const generateHTML = (data) => {
           localStorage.setItem(chatSenderNameStorageKey, value);
           input.value = value;
           document.getElementById('chat-settings').hidden = true;
-          if (chatSocket) {
-            closeChatConversation();
-            chatSocket.auth = {
-              senderId: chatSenderId,
-              senderName: chatSenderName,
-              locationCode: chatLocationCode
-            };
-            chatSocket.disconnect().connect();
-          }
+          updateChatConnection('Socket messaging is off', false);
         }
 
         function updateChatSendState() {
@@ -4958,7 +4836,7 @@ export const generateHTML = (data) => {
           const button = document.getElementById('chat-send');
           if (!input || !button) return;
           const conversationShell = document.getElementById('chat-conversation-shell');
-          button.disabled = !chatSocket?.connected || !activeChatUser ||
+          button.disabled = !activeChatUser ||
             !conversationShell || conversationShell.hidden ||
             conversationShell.classList.contains('collapsed') || !input.value.trim();
         }
@@ -4967,19 +4845,21 @@ export const generateHTML = (data) => {
           event.preventDefault();
           const input = document.getElementById('chat-message-input');
           const text = input.value.trim();
-          if (!text || !chatSocket?.connected) return;
+          if (!text || !activeChatUser) return;
 
           document.getElementById('chat-send').disabled = true;
-          chatSocket.timeout(5000).emit('chat:message', { text }, (error, response) => {
-            if (error || !response?.ok) {
-              updateChatConnection(response?.error || 'Unable to send message', chatSocket.connected);
-              updateChatSendState();
-              return;
-            }
-            input.value = '';
-            input.style.height = '';
-            updateChatSendState();
+          appendChatMessage({
+            id: window.crypto?.randomUUID?.() ||
+              Date.now().toString(36) + Math.random().toString(36).slice(2),
+            senderId: chatSenderId,
+            recipientId: activeChatUser.id,
+            senderName: chatSenderName,
+            text,
+            createdAt: new Date().toISOString()
           });
+          input.value = '';
+          input.style.height = '';
+          updateChatSendState();
         }
 
         function handleChatComposerKeydown(event) {
@@ -5014,8 +4894,7 @@ export const generateHTML = (data) => {
             startJobSelection();
             initializeJobListExtras();
             document.addEventListener('click', closeDetailActionsMenu);
-            document.addEventListener('visibilitychange', flushBufferedMessagesForActiveConversation);
-            startRealtimeChat();
+            startLocalChat();
           }
           startLiveUpdates();
         });

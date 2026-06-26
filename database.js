@@ -19,14 +19,6 @@ const jobSchema = new mongoose.Schema({
 
 const Job = mongoose.model('jobs_1', jobSchema);
 
-const chatUserSchema = new mongoose.Schema({
-  senderId: { type: String, required: true, unique: true, maxlength: 80 },
-  name: { type: String, required: true, maxlength: 60 },
-  lastSeen: { type: Date, default: Date.now, index: true }
-}, { timestamps: true });
-
-const ChatUser = mongoose.model('chat_users', chatUserSchema);
-
 const MONGODB_URI = process.env.MONGODB_URI;
 const DNS_OVER_HTTPS_PROVIDERS = [
   { ip: '1.1.1.1', host: 'cloudflare-dns.com', path: '/dns-query' },
@@ -153,4 +145,4 @@ const connectDatabase = async () => {
   }
 };
 
-export { Job, ChatUser, connectDatabase, buildStandardMongoUri };
+export { Job, connectDatabase, buildStandardMongoUri };
